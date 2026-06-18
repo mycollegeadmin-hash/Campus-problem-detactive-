@@ -22,9 +22,14 @@ ADMIN_EMAIL = "mycollegeadmin@gmail.com"
 ADMIN_PASSWORD = "@admin123"
 
 GMAIL_EMAIL = "mycollegeadmin@gmail.com"
+print("GMAIL_EMAIL =", GMAIL_EMAIL)
+print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
 def send_email_notification(student, title, category):
 
     try:
+        print("GMAIL_EMAIL =", GMAIL_EMAIL)
+        print("APP PASSWORD =", GMAIL_APP_PASSWORD)
+
         msg = MIMEMultipart()
 
         msg["From"] = GMAIL_EMAIL
@@ -41,7 +46,7 @@ Category: {category}
 
         msg.attach(MIMEText(body, "plain"))
 
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
         server.starttls()
 
         server.login(
@@ -50,12 +55,12 @@ Category: {category}
         )
 
         server.send_message(msg)
-
         server.quit()
 
     except Exception as e:
-        print("Email Error:", e)
-
+        import traceback
+        print("Email Error:", str(e))
+        traceback.print_exc()
 # ================= DATABASE =================
 
 def init_db():
@@ -1040,4 +1045,4 @@ if __name__ == "__main__":
         debug=True,
         host="0.0.0.0",
         port=5000
-    )
+        )
