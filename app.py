@@ -9,6 +9,7 @@ from email.mime.multipart import MIMEMultipart
 
 ADMIN_EMAIL = "mycollegeadmin@gmail.com"
 
+GMAIL_EMAIL = os.getenv("GMAIL_EMAIL")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 
 app = Flask(__name__)
@@ -20,7 +21,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ADMIN_EMAIL = "mycollegeadmin@gmail.com"
 ADMIN_PASSWORD = "@admin123"
 
-GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
+GMAIL_EMAIL = "mycollegeadmin@gmail.com"
 def send_email_notification(student, title, category):
 
     try:
@@ -1039,4 +1040,4 @@ if __name__ == "__main__":
         debug=True,
         host="0.0.0.0",
         port=5000
-)
+    )
