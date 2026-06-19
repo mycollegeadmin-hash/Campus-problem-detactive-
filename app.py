@@ -52,9 +52,11 @@ Open Admin Dashboard:
 
 
         msg.attach(MIMEText(body, "plain"))
-print("GMAIL_EMAIL =", GMAIL_EMAIL)
-print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
-print("Trying to connect Gmail...")
+        
+        print("GMAIL_EMAIL =", GMAIL_EMAIL)
+        print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
+        print("Trying to connect Gmail...")
+        
         server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
 
         server.login(
