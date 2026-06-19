@@ -61,16 +61,27 @@ Open Admin Dashboard:
 
         msg.attach(MIMEText(body, "plain"))
 
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        server.starttls()
+        try:
+    print("GMAIL_EMAIL =", GMAIL_EMAIL)
+    print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
 
-        server.login(
-            GMAIL_EMAIL,
-            GMAIL_APP_PASSWORD
-        )
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
 
-        server.send_message(msg)
-        server.quit()
+    server.login(
+        GMAIL_EMAIL,
+        GMAIL_APP_PASSWORD
+    )
+
+    server.send_message(msg)
+    server.quit()
+
+    print("EMAIL SENT SUCCESS")
+
+except Exception as e:
+    print("EMAIL ERROR =", e)
 
     except Exception as e:
         import traceback
