@@ -53,8 +53,7 @@ Open Admin Dashboard:
 
         msg.attach(MIMEText(body, "plain"))
 
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        server.starttls()
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
 
         server.login(
             GMAIL_EMAIL,
