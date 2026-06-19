@@ -6,8 +6,7 @@ from werkzeug.utils import secure_filename
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-ADMIN_EMAIL = "mycollegeadmin@gmail.com"
+import threading
 
 GMAIL_EMAIL = os.getenv("GMAIL_EMAIL")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
@@ -21,24 +20,14 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ADMIN_EMAIL = "mycollegeadmin@gmail.com"
 ADMIN_PASSWORD = "@admin123"
 
-GMAIL_EMAIL = "mycollegeadmin@gmail.com"
 print("GMAIL_EMAIL =", GMAIL_EMAIL)
 print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
 def send_email_notification(student, title, category):
 
     print("EMAIL FUNCTION CALLED")
-
     try:
-
         print("GMAIL_EMAIL =", GMAIL_EMAIL)
         print("APP PASSWORD =", GMAIL_APP_PASSWORD)
-
-        import socket
-
-        try:
-            print("SMTP IP =", socket.gethostbyname("smtp.gmail.com"))
-        except Exception as e:
-            print("DNS ERROR:", e)
 
         msg = MIMEMultipart()
 
@@ -46,10 +35,12 @@ def send_email_notification(student, title, category):
         msg["To"] = ADMIN_EMAIL
         msg["Subject"] = "New Campus Complaint"
 
-        APP_URL = "https://campus-problem-detective--1.onrender.com"
+        APP_URL = "https://your-app-name.onrender.com"
+
+        APP_URL = "https://your-app-name.onrender.com"
 
         body = f"""
-New Complaint Submitted
+🔔 New Complaint Submitted
 
 Student: {student}
 Title: {title}
@@ -59,29 +50,19 @@ Open Admin Dashboard:
 {APP_URL}/admin-login
 """
 
+
         msg.attach(MIMEText(body, "plain"))
 
-        try:
-    print("GMAIL_EMAIL =", GMAIL_EMAIL)
-    print("GMAIL_APP_PASSWORD =", GMAIL_APP_PASSWORD)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+        server.starttls()
 
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.ehlo()
-    server.starttls()
-    server.ehlo()
+        server.login(
+            GMAIL_EMAIL,
+            GMAIL_APP_PASSWORD
+        )
 
-    server.login(
-        GMAIL_EMAIL,
-        GMAIL_APP_PASSWORD
-    )
-
-    server.send_message(msg)
-    server.quit()
-
-    print("EMAIL SENT SUCCESS")
-
-except Exception as e:
-    print("EMAIL ERROR =", e)
+        server.send_message(msg)
+        server.quit()
 
     except Exception as e:
         import traceback
@@ -130,8 +111,8 @@ def home():
     <html>
 
     <head>
-
-    <title>Campus Problem Detective</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Problem Detective</title>
 
     <style>
 
@@ -147,7 +128,8 @@ def home():
     }
 
     .container{
-        width:400px;
+    width:90%;
+    max-width:400px;
         margin:80px auto;
         background:white;
         padding:30px;
@@ -241,7 +223,8 @@ def student_login():
     }
 
     .box{
-        width:350px;
+    width:90%;
+    max-width:350px;
         margin:80px auto;
         background:white;
         padding:25px;
@@ -326,7 +309,8 @@ def student_dashboard():
     }}
 
     .box{{
-        width:500px;
+    width:90%;
+    max-width:500px;
         margin:auto;
         margin-top:40px;
         background:white;
@@ -496,59 +480,97 @@ complaint_id
 )
 )
 
-    send_email_notification(
-    session.get("student_name"),
-    request.form["title"],
-    request.form["category"]
-)
+    threading.Thread(
+    target=send_email_notification,
+    args=(
+        session.get("student_name"),
+        request.form["title"],
+        request.form["category"]
+    )
+).start()
 
     conn.commit()
     conn.close()
 
     return """
+<html>
+<head>
+<style>
 
-    <html>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#27ae60,#2ecc71);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
 
-    <style>
+.box{
+    background:white;
+    width:450px;
+    padding:35px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
 
-    body{
-        background:#eafaf1;
-        text-align:center;
-        font-family:Arial;
-        padding-top:120px;
-    }
+h1{
+    color:#27ae60;
+}
 
-    .btn{
-        background:#27ae60;
-        color:white;
-        padding:12px 25px;
-        text-decoration:none;
-        border-radius:8px;
-    }
+p{
+    color:#555;
+    font-size:16px;
+}
 
-    </style>
+.btn{
+    display:inline-block;
+    margin:10px;
+    padding:12px 25px;
+    text-decoration:none;
+    color:white;
+    border-radius:8px;
+    font-weight:bold;
+}
 
-    <h1>
-    ✅ Complaint Submitted Successfully
-    </h1>
+.submit{
+    background:#3498db;
+}
 
-    <br><br>
+.home{
+    background:#e67e22;
+}
 
-    <a class="btn"
-    href="/student-dashboard">
-    Submit Another Complaint
-    </a>
+</style>
+</head>
 
-    <br><br>
+<body>
 
-    <a class="btn"
-    href="/">
-    Home
-    </a>
+<div class="box">
 
-    </html>
+<h1>✅ Complaint Submitted Successfully</h1>
 
-    """
+<p>
+Your complaint has been recorded and sent to the admin.
+</p>
+
+<a class="btn submit"
+href="/student-dashboard">
+➕ Submit Another Complaint
+</a>
+
+<a class="btn home"
+href="/">
+🏠 Home Page
+</a>
+
+</div>
+
+</body>
+</html>
+"""
     # ================= UPLOAD IMAGE VIEW =================
 
 @app.route('/uploads/<filename>')
@@ -594,7 +616,8 @@ def view_complaints():
     }
 
     .box{
-        width:800px;
+    width:95%;
+    max-width:800px;
         margin:auto;
         background:white;
         padding:20px;
@@ -723,7 +746,8 @@ def admin_login():
     }
 
     .box{
-        width:350px;
+    width:90%;
+    max-width:350px;
         margin:80px auto;
         background:white;
         padding:25px;
@@ -832,7 +856,8 @@ def admin():
     }}
 
     .container{{
-        width:900px;
+    width:95%;
+    max-width:900px;
         margin:auto;
         margin-top:20px;
     }}
@@ -1066,9 +1091,8 @@ def logout():
 # ================= RUN APP =================
 
 if __name__ == "__main__":
-
+    port = int(os.environ.get("PORT", 5000))
     app.run(
-        debug=True,
         host="0.0.0.0",
-        port=5000
-        )
+        port=port
+                           )
