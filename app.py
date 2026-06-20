@@ -115,7 +115,7 @@ def home():
 
     <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campus Problem Detective</title>
+<title>Campus Problem Detector</title>
 
     <style>
 
@@ -174,7 +174,7 @@ def home():
 
     <div class="container">
 
-        <h1>🏫 Campus Problem Detective</h1>
+        <h1>🏫 Campus Problem Detector</h1>
 
         <a class="student"
         href="/student-login">
