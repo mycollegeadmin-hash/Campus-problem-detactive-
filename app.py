@@ -192,6 +192,13 @@ def home():
         </a>
 
     </div>
+    <hr>
+
+<center>
+🏫 Campus Problem Detector © 2026
+<br>
+Developed for College Complaint Management System
+</center>
 
     </body>
 
